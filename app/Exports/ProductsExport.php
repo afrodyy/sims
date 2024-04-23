@@ -24,7 +24,7 @@ class ProductsExport implements FromCollection, WithHeadings, ShouldAutoSize
     public function headings(): array
     {
         return [
-            'ID',
+            'No.',
             'Nama Produk',
             'Kategori Produk',
             'Harga Barang',
