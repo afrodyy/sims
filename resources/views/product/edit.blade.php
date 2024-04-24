@@ -54,7 +54,12 @@
                             value="{{ $product->stock }}" placeholder="Masukkan jumlah stok barang" required>
                     </div>
                     <div class="col-12">
-                        <img src="{{ asset($product->image_path) }}" width="200" class="img-thumbnail"
+                        {{-- View image from local server --}}
+                        {{-- <img src="{{ asset($product->image_path) }}" width="200" class="img-thumbnail"
+                            alt="{{ $product->image_path }}"><br /> --}}
+
+                        {{-- View image from cloudinary --}}
+                        <img src="{{ $product->image_path }}" width="200" class="img-thumbnail"
                             alt="{{ $product->image_path }}"><br />
                         <label for="image" class="form-label">Image</label>
                         <div class="input-group mb-3">

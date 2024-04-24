@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Exports\ProductsExport;
+use CloudinaryLabs\CloudinaryLaravel\Facades\Cloudinary;
 
 class ProductController extends Controller
 {
@@ -105,9 +106,12 @@ class ProductController extends Controller
             'image.max' => 'Ukuran file tidak boleh lebih dari 100 KB.',
         ]);
 
-        // Simpan gambar ke dalam direktori
-        $image = $request->file('image');
-        $imagePath = $request->file('image')->move('product_images', rand(0, 99999999999) . '_' . str_replace(' ', '_', $image->getClientOriginalName()));
+        // Simpan gambar ke dalam direktori local
+        // $image = $request->file('image');
+        // $imagePath = $request->file('image')->move('product_images', rand(0, 99999999999) . '_' . str_replace(' ', '_', $image->getClientOriginalName()));
+
+        // Simpan gambar ke cloudinary
+        $imagePath = Cloudinary::upload($request->file('image')->getRealPath());
 
         // Buat instansiasi model untuk disimpan ke database
         $product = new Product();
@@ -116,7 +120,8 @@ class ProductController extends Controller
         $product->buy_price = $request->buy_price;
         $product->sell_price = $request->sell_price;
         $product->stock = $request->stock;
-        $product->image_path = $imagePath;
+        $product->image_path = $imagePath->getSecurePath();
+        $product->image_public_id = $imagePath->getPublicId();
 
         // Simpan data ke database
         $product->save();
@@ -158,15 +163,22 @@ class ProductController extends Controller
                 'image' => 'required|image|mimes:jpg,png|max:100',
             ]);
 
-            // Delete old image
-            if (file_exists($product->image_path)) {
-                unlink($product->image_path);
+            // Delete old image from local server
+            // if (file_exists($product->image_path)) {
+            //     unlink($product->image_path);
+            // }
+
+            if ($product->image_path !== null) {
+                $response = Cloudinary::destroy($product->image_public_id);
             }
 
-            // Save new image
-            $image = $request->file('image');
-            $imagePath = $request->file('image')->move('product_images', rand(0, 99999999999) . '_' . str_replace(' ', '_', $image->getClientOriginalName()));
-            $product->image_path = $imagePath;
+            // Save new image to local server
+            // $imagePath = $request->file('image')->move('product_images', rand(0, 99999999999) . '_' . str_replace(' ', '_', $image->getClientOriginalName()));
+
+            // Simpan gambar ke cloudinary
+            $imagePath = Cloudinary::upload($request->file('image')->getRealPath());
+            $product->image_path = $imagePath->getSecurePath();
+            $product->image_public_id = $imagePath->getPublicId();
         }
 
         $product->update();
@@ -179,9 +191,9 @@ class ProductController extends Controller
     {
         $product = Product::findOrFail($id);
 
-        // Hapus file gambar terkait jika ada
-        if ($product->image_path) {
-            Storage::delete($product->image_path);
+        // Hapus file dari cloudinary
+        if ($product->image_path !== null) {
+            $response = Cloudinary::destroy($product->image_public_id);
         }
 
         // Hapus produk dari database

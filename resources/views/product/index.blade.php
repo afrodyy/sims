@@ -77,8 +77,12 @@
                                 <tr>
                                     <th>{{ $loop->iteration }}.</th>
                                     <td>
-                                        <img src="{{ asset($item->image_path) }}" width="50"
-                                            alt="{{ $item->image_path }}">
+                                        {{-- View Image from Local Server --}}
+                                        {{-- <img src="{{ asset($item->image_path) }}" width="50"
+                                            alt="{{ $item->image_path }}"> --}}
+
+                                        {{-- View Image from Cloudinary --}}
+                                        <img src="{{ $item->image_path }}" width="50" alt="{{ $item->image_path }}">
                                     </td>
                                     <td>{{ $item->name }}</td>
                                     <td>{{ $item->category->name }}</td>
