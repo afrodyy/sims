@@ -12,21 +12,19 @@
     <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
 </head>
 
-<body class="bg-danger">
+<body class="bg-white">
     <div id="layoutAuthentication">
         <div id="layoutAuthentication_content">
             <main>
-                <div class="container">
-                    <div class="row justify-content-center">
-                        <div class="col-lg-5">
-                            <div class="card shadow-lg border-0 rounded-lg mt-5">
-                                <div class="card-header">
+                <div class="container-fluid">
+                    <div class="row justify-content-between">
+                        <div class="col-lg-6 my-auto"> <!-- Bagian Kiri -->
+                            <div class="row">
+                                <div class="col-6 offset-3">
                                     <h3 class="text-center font-weight-light my-4">
                                         <i class="fa-solid fa-bag-shopping text-danger"></i> SIMS Web App
                                     </h3>
-                                </div>
-                                <h3 class="text-center mt-3">Masuk atau buat akun untuk memulai</h3>
-                                <div class="card-body p-4">
+                                    <h3 class="text-center my-3">Masuk atau buat akun untuk memulai</h3>
                                     @if (session('danger'))
                                         <div class="alert alert-danger alert-dismissible fade show" role="alert">
                                             {{ session('danger') }}
@@ -55,11 +53,14 @@
                                         </div>
                                         <div class="d-flex align-items-center justify-content-between mt-5 mb-0">
                                             <button type="submit" class="btn btn-danger w-100">Masuk</button>
-                                            {{-- <a href="{{ url('/products') }}" class="btn btn-danger w-100">Masuk</a> --}}
                                         </div>
                                     </form>
                                 </div>
                             </div>
+                        </div>
+                        <div class="col-lg-6 pe-0" style="height: 100vh;"> <!-- Bagian Kanan -->
+                            <img src="/assets/assets/img/login.png" class="img-fluid h-100 w-100"
+                                style="object-fit: cover !important" alt="Gambar Login">
                         </div>
                     </div>
                 </div>

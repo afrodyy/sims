@@ -21,12 +21,25 @@
                     <input type="text" name="search" id="search" class="form-control"
                         placeholder="Masukkan kata kunci">
                 </div>
-                <select id="category" class="form-select">
-                    <option value="">Semua</option>
-                    @foreach ($categories as $item)
-                        <option value="{{ $item->id }}">{{ $item->name }}</option>
-                    @endforeach
-                </select>
+                @if ($filter !== null)
+                    <select id="category" class="form-select">
+                        @foreach ($categories as $item)
+                            <option value="{{ $item->id }}" @if ($item->id === intVal($filter)) selected @endif>
+                                {{ $item->name }}
+                            </option>
+                        @endforeach
+                    </select>
+                    <a href="{{ url('products') }}" class="btn btn-danger">Reset</a>
+                @else
+                    <select id="category" class="form-select">
+                        <option value="">Semua</option>
+                        @foreach ($categories as $item)
+                            <option value="{{ $item->id }}" @if ($item->id === intVal($filter)) selected @endif>
+                                {{ $item->name }}
+                            </option>
+                        @endforeach
+                    </select>
+                @endif
             </div>
 
             <div class="d-flex align-items-center">
@@ -157,19 +170,39 @@
             }
         });
 
+        // Tangani tekan tombol enter pada input teks
+        document.getElementById('category').addEventListener('change', function(e) {
+            processFilterByCategory();
+        });
+
         // Fungsi untuk memproses pencarian
         function processSearch() {
             var searchKeyword = document.getElementById('search').value;
             var url;
 
             if (searchKeyword.trim() === '') {
-                url = '{{ url('/products') }}'; // Jika input pencarian kosong
+                url = "{{ url('/products') }}"; // Jika input pencarian kosong
             } else {
-                url = '{{ url('/products') }}'; // Jika input pencarian tidak kosong
+                url = "{{ url('/products?search=') }}"; // Jika input pencarian tidak kosong
             }
 
             // Redirect ke halaman pencarian atau halaman produk
-            window.location.href = url + '?search=' + searchKeyword;
+            window.location.href = url + searchKeyword;
+        }
+
+        function processFilterByCategory() {
+            var categoryId = document.getElementById('category').value;
+            console.log(categoryId);
+            var url;
+
+            if (categoryId === '') {
+                url = "{{ url('/products') }}"; // Jika input pencarian kosong
+            } else {
+                url = "{{ url('/products?filter=') }}"; // Jika input pencarian tidak kosong
+            }
+
+            // Redirect ke halaman pencarian atau halaman produk
+            window.location.href = url + categoryId;
         }
     </script>
 @endsection

@@ -24,6 +24,6 @@ class AuthCheckMiddleware
         }
 
         // Jika belum login atau tidak ada token JWT, redirect ke halaman login dengan pesan error
-        return redirect('/login')->with('error', 'Anda harus login terlebih dahulu.');
+        return redirect('login')->with('danger', 'Anda harus login terlebih dahulu.');
     }
 }

@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\User;
+use CloudinaryLabs\CloudinaryLaravel\Facades\Cloudinary;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Tymon\JWTAuth\Facades\JWTAuth;
@@ -10,7 +12,6 @@ class AuthController extends Controller
 {
     public function login(Request $request)
     {
-        // dd($request->session());
         return view('auth.login');
     }
 
@@ -30,7 +31,7 @@ class AuthController extends Controller
         }
 
         // Jika autentikasi gagal, kembalikan ke halaman login dengan pesan kesalahan
-        return redirect()->back()->withErrors(['error' => 'Email atau password salah']);
+        return redirect('login')->with('danger', 'Email atau password yang anda masukkan salah!');
     }
 
     public function profile()
@@ -40,7 +41,26 @@ class AuthController extends Controller
 
     public function profileUpdate(Request $request)
     {
-        dd($request->all());
+        $user = User::findOrFail(Auth::user()->id);
+
+        if ($request->hasFile('image')) {
+            $validatedData = $request->validate([
+                'image' => 'required|image|mimes:jpg,png',
+            ]);
+
+            if ($user->image_path !== null) {
+                $response = Cloudinary::destroy($user->image_public_id);
+            }
+
+            // Simpan gambar ke cloudinary
+            $imagePath = Cloudinary::upload($request->file('image')->getRealPath());
+            $user->avatar = $imagePath->getSecurePath();
+            $user->public_image_id = $imagePath->getPublicId();
+        }
+
+        $user->update();
+
+        return redirect('/products')->with('success', 'Data produk berhasil disimpan.');
     }
 
     public function logout(Request $request)

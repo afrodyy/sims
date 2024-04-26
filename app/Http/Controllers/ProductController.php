@@ -6,7 +6,6 @@ use App\Models\Category;
 use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Storage;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Exports\ProductsExport;
 use CloudinaryLabs\CloudinaryLaravel\Facades\Cloudinary;
@@ -20,7 +19,7 @@ class ProductController extends Controller
 
         // Memeriksa apakah token JWT ada
         if (!$token) {
-            return redirect('/login')->with('danger', 'Anda harus login terlebih dahulu kedalam sistem!');
+            return redirect('login')->with('danger', 'Anda harus login terlebih dahulu kedalam sistem!');
         }
 
         try {
@@ -39,14 +38,21 @@ class ProductController extends Controller
                     ->orWhere('sell_price', 'like', '%' . $search . '%')
                     ->orWhere('stock', 'like', '%' . $search . '%')
                     ->paginate(10);
+                $filter = null;
+            } elseif ($request->filter) {
+                $filter = $request->filter;
+                $products = Product::where('category_id', $filter)
+                    ->paginate(10);
+                $search = null;
             } else {
                 $products = Product::orderByDesc('id')->paginate(10);
                 $search = null;
+                $filter = null;
             }
 
             $categories = Category::all();
 
-            return view('product.index', compact('products', 'categories', 'search'));
+            return view('product.index', compact('products', 'categories', 'search', 'filter'));
         } catch (\Exception $e) {
             // Tangani kesalahan saat memverifikasi token JWT
             return response()->json(['error' => $e->getMessage()], 401);
