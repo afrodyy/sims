@@ -60,7 +60,7 @@ class AuthController extends Controller
 
         $user->update();
 
-        return redirect('/products')->with('success', 'Data produk berhasil disimpan.');
+        return redirect('/profile')->with('success', 'Avatar berhasil diperbarui.');
     }
 
     public function logout(Request $request)

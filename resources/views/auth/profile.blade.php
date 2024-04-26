@@ -10,6 +10,12 @@
 
 @section('content')
     <div class="container-fluid px-4">
+        @if (session('success'))
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                {{ session('success') }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        @endif
         <div class="position-relative" style="display: inline-block;">
             <img src="{{ Auth::user()->avatar }}" width="200" class="img-circle" alt="">
             <label for="image" class="position-absolute bottom-0 end-0">
